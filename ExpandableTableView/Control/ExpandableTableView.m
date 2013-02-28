@@ -362,12 +362,20 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	if ([_expandedSectionIndexes containsIndex:indexPath.section] && indexPath.row != 0) {
-		return [_expandableDelegate tableView:self heightForRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
+        if ([_expandableDelegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
+            return [_expandableDelegate tableView:self heightForRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row - 1 inSection:indexPath.section]];
+        }
 	} else if (indexPath.row == 0 && _ungroupSingleElement && [_expandableDataSource tableView:self numberOfRowsInSection:indexPath.section] == 1) {
-		return [_expandableDelegate tableView:self heightForRowAtIndexPath:indexPath];
+        if ([_expandableDelegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
+            return [_expandableDelegate tableView:self heightForRowAtIndexPath:indexPath];
+        }
 	} else {
-		return [_expandableDelegate tableView:self heightForSection:indexPath.section];
+        if ([_expandableDelegate respondsToSelector:@selector(tableView:heightForSection:)]) {
+            return [_expandableDelegate tableView:self heightForSection:indexPath.section];
+        }
 	}
+
+    return tableView.rowHeight;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath {
